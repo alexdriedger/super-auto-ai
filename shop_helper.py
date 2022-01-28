@@ -2,6 +2,11 @@ from sapai import Player, Food
 from sapai.data import data
 from Action import *
 
+import itertools
+
+
+# TODO : RESOLVE ACTION HELPER METHOD
+
 
 def get_possible_actions(player: Player) -> set[Action]:
     team = player.team
@@ -14,8 +19,10 @@ def get_possible_actions(player: Player) -> set[Action]:
     possible_actions.add(Action(Action.ACTION_GO_TO_ARRANGE_TEAM_STEP))
 
     # Freezing & Unfreezing actions are not implemented yet to prevent infinite loops in agents
+    if player.gold < 0:
+        raise RuntimeError("Getting possible actions with negative money")
 
-    if player.gold <= 0:
+    if player.gold == 0:
         return possible_actions
 
     # Re-roll
@@ -57,3 +64,14 @@ def get_possible_actions(player: Player) -> set[Action]:
 def is_food_multi_target(food: Food) -> bool:
     fd = data["foods"][food.name]["ability"]["effect"]["target"]
     return "n" in fd
+
+
+def get_all_reorders(length: int) -> list[tuple]:
+    if length < 0:
+        raise RuntimeError("Getting reorderings with negative length of team")
+
+    if length == 0:
+        return list()
+
+    base = list(range(length))
+    return list(itertools.permutations(base, length))
