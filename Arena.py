@@ -43,10 +43,12 @@ class Arena:
     def player_fight_outcome(player: Player, outcome: str):
         if outcome == "win":
             player.lf_winner = True
+            player.wins += 1
         elif outcome == "draw":
             player.lf_winner = False
         elif outcome == "loss":
             player.lf_winner = False
+            # TODO : USE MATH.MAX TO AVOID HAVING NEGATIVE LIVES
             if player.turn <= 2:
                 player.lives -= 1
             elif player.turn <= 4:
@@ -110,5 +112,21 @@ class Arena:
                 continue
             game_state_id_1 = pair[0]
             game_state_id_2 = pair[1]
-            self.do_battle_phase(game_state_id_1, game_state_id_2)
+            try:
+                self.do_battle_phase(game_state_id_1, game_state_id_2)
+            except Exception as e:
+                from pprint import pprint
+                print("\n\n\n\n\n\n\nFound bad state in battle")
+                print("Action history 1")
+                pprint(self.active_game_states[game_state_id_1][0].player.action_history)
+                print("Action history 1")
+                pprint(self.active_game_states[game_state_id_2][0].player.action_history)
+                print("Player 1")
+                pprint(self.active_game_states[game_state_id_1][0].player)
+                print("Player 2")
+                pprint(self.active_game_states[game_state_id_2][0].player)
+                import traceback
+                tb = traceback.format_exc()
+                print(tb)
+                raise e
 
